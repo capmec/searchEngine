@@ -1,5 +1,3 @@
-// src/App.tsx
-
 import React, { useEffect, useState } from 'react';
 import { fetchItems, SearchResponse } from './services/api';
 import SearchBar from './components/SearchBar';
@@ -13,7 +11,7 @@ const App: React.FC = () => {
 	const [query, setQuery] = useState('');
 	const pageSize = 10; // Set your desired page size
 
-	const handleSearch = async (searchQuery: string) => {
+	const handleSearch = (searchQuery: string) => {
 		setQuery(searchQuery);
 		setCurrentPage(1); // Reset to first page on new search
 	};
