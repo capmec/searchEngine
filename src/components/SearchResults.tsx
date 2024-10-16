@@ -1,6 +1,7 @@
 // src/components/SearchResults.tsx
 
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { SearchResultItem } from '../services/api';
 import Pagination from './Pagination';
 
@@ -39,7 +40,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({ items }) => {
 					<div
 						key={item.id}
 						className='p-4 border-b'>
-						<h2 className='font-bold text-xl'>{item.label}</h2>
+						<h2 className='font-bold text-xl'>
+							<Link
+								to={`/tools-services/${item.id}`}
+								className='text-blue-600'>
+								{item.label}
+							</Link>
+						</h2>
 						{/* Check if accessibleAt is defined and has at least one item */}
 						{item.accessibleAt &&
 						Array.isArray(item.accessibleAt) &&

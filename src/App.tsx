@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { fetchItems, SearchResponse } from './services/api';
 import SearchBar from './components/SearchBar';
 import SearchResults from './components/SearchResults';
-import Pagination from './components/Pagination';
 
 const App: React.FC = () => {
 	const [items, setItems] = useState<SearchResponse['items']>([]);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(0);
 	const [query, setQuery] = useState('');
-	const pageSize = 10; // Set your desired page size
+	const pageSize = 10;
 
 	const handleSearch = (searchQuery: string) => {
 		setQuery(searchQuery);

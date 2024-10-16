@@ -16,7 +16,7 @@ export interface Contributor {
 export interface SearchResultItem {
 	id: number;
 	label: string;
-	accessibleAt: string[];
+	accessibleAt?: string[];
 	contributors: Contributor[];
 }
 
@@ -52,4 +52,37 @@ export const fetchItems = async (
 		})),
 		count: data.count,
 	};
+};
+
+// src/services/api.ts
+
+export const fetchDetailData = async (id: string): Promise<any> => {
+	try {
+		const response = await fetch(
+			`http://localhost:5000/api/item-search?id=${id}`,
+		);
+
+		if (!response.ok) {
+			throw new Error(`Error: ${response.status} ${response.statusText}`);
+		}
+
+		const data = await response.json();
+
+		// Check if the data contains an 'items' array and find the item by id
+		if (!data.items || !Array.isArray(data.items)) {
+			throw new Error('Items not found in response');
+		}
+
+		const item = data.items.find(
+			(item: { id: number }) => item.id === Number(id),
+		);
+		if (!item) {
+			throw new Error('Item not found');
+		}
+
+		return item;
+	} catch (error) {
+		console.error('Error fetching detail data:', error);
+		throw new Error('Failed to fetch detail data');
+	}
 };

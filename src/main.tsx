@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import ItemDetail from './components/ItemDetail';
+import DetailView from './components/DetailView';
 
 import App from './App';
 
@@ -20,7 +20,7 @@ root.render(
 				/>
 				<Route
 					path='/tools-services/:id'
-					element={<ItemDetail />}
+					element={<DetailView />}
 				/>
 			</Routes>
 		</Router>
