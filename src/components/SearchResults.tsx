@@ -1,34 +1,48 @@
+// src/components/SearchResults.tsx
+
 import React from 'react';
-import { Card, CardContent, CardHeader } from './ui/card';
-import { Link } from 'react-router-dom';
+import { SearchResultItem } from '../services/api';
 
 interface SearchResultsProps {
-	results: any[];
+	items: SearchResultItem[];
 }
 
-const SearchResults: React.FC<SearchResultsProps> = ({ results }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({ items }) => {
 	return (
-		<div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-			{results.map((result) => (
-				<Card
-					key={result.id}
-					className='bg-gray-100'>
-					<CardHeader>
-						<h3 className='text-lg font-semibold'>{result.label}</h3>
-					</CardHeader>
-					<CardContent>
-						<p className='text-sm'>Accessible at: {result.accessibleAt}</p>
-						<p className='text-sm'>
-							Contributors: {result.contributors.join(', ')}
-						</p>
-						<Link
-							to={`/detail/${result.id}`}
-							className='text-blue-500 underline'>
-							View Details
-						</Link>
-					</CardContent>
-				</Card>
-			))}
+		<div className='mt-4'>
+			{items.length > 0 ? (
+				items.map((item) => (
+					<div
+						key={item.id}
+						className='p-4 border-b'>
+						<h2 className='font-bold text-xl'>{item.label}</h2>
+						<a
+							href={item.accessibleAt[0]}
+							className='text-blue-600'
+							target='_blank'
+							rel='noopener noreferrer'>
+							Access here
+						</a>
+						<div>
+							<h3 className='font-semibold mt-2'>Contributors:</h3>
+							{item.contributors.length > 0 ? (
+								<ul>
+									{item.contributors.map((contributor, idx) => (
+										<li key={idx}>
+											{contributor.actor.name}{' '}
+											{contributor.role?.label && `- ${contributor.role.label}`}
+										</li>
+									))}
+								</ul>
+							) : (
+								<p>No contributors available.</p>
+							)}
+						</div>
+					</div>
+				))
+			) : (
+				<p>No results found.</p>
+			)}
 		</div>
 	);
 };

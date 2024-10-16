@@ -1,7 +1,17 @@
-import { useState } from 'react';
+// src/components/SearchBar.tsx
 
-const SearchBar = ({ onSearch }: { onSearch: (query: string) => void }) => {
-	const [query, setQuery] = useState<string>('');
+import React, { useState } from 'react';
+
+interface SearchBarProps {
+	onSearch: (query: string) => void;
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+	const [query, setQuery] = useState('');
+
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setQuery(e.target.value);
+	};
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -11,17 +21,17 @@ const SearchBar = ({ onSearch }: { onSearch: (query: string) => void }) => {
 	return (
 		<form
 			onSubmit={handleSubmit}
-			className='flex flex-col space-y-4'>
+			className='mb-4'>
 			<input
 				type='text'
-				className='border rounded p-2'
 				value={query}
-				onChange={(e) => setQuery(e.target.value)}
-				placeholder='Search for tools or services...'
+				onChange={handleChange}
+				placeholder='Search...'
+				className='border p-2 w-full'
 			/>
 			<button
 				type='submit'
-				className='bg-blue-500 text-white p-2 rounded'>
+				className='mt-2 p-2 bg-blue-500 text-white'>
 				Search
 			</button>
 		</form>
