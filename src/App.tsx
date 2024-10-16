@@ -36,11 +36,6 @@ const App: React.FC = () => {
 			<h1 className='text-2xl font-bold'>Search Marketplace</h1>
 			<SearchBar onSearch={handleSearch} />
 			<SearchResults items={items} />
-			<Pagination
-				currentPage={currentPage}
-				totalPages={totalPages}
-				onPageChange={setCurrentPage}
-			/>
 		</div>
 	);
 };
