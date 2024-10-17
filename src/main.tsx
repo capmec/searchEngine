@@ -19,7 +19,7 @@ root.render(
 					element={<App />}
 				/>
 				<Route
-					path='/tools-services/:id'
+					path='/tools-services/:persistentId'
 					element={<DetailView />}
 				/>
 			</Routes>

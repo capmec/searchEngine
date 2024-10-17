@@ -1,23 +1,18 @@
 // src/services/api.ts
 
-export interface Actor {
-	id: number;
-	name: string;
-}
-
-export interface Contributor {
-	actor: Actor;
-	role?: {
-		code: string;
-		label: string;
-	};
-}
-
 export interface SearchResultItem {
-	id: number;
+	id: string;
+	persistentId: string; // Ensure this is part of the interface
 	label: string;
-	accessibleAt?: string[];
-	contributors: Contributor[];
+	accessibleAt: string[];
+	contributors: {
+		actor: {
+			name: string;
+		};
+		role?: {
+			label: string;
+		};
+	}[];
 }
 
 export interface SearchResponse {
@@ -39,7 +34,8 @@ export const fetchItems = async (
 	const data = await response.json();
 	return {
 		items: data.items.map((item: any) => ({
-			id: item.id,
+			id: item.id, // Keep id if needed
+			persistentId: item.persistentId, // Make sure persistentId is part of the mapped data
 			label: item.label,
 			accessibleAt: item.accessibleAt,
 			contributors: item.contributors.map((contributor: any) => ({
@@ -56,31 +52,23 @@ export const fetchItems = async (
 
 // src/services/api.ts
 
-export const fetchDetailData = async (id: string): Promise<any> => {
+export const fetchDetailData = async (persistentId: string): Promise<any> => {
 	try {
 		const response = await fetch(
-			`http://localhost:5000/api/item-search?id=${id}`,
+			`https://marketplace-api.sshopencloud.eu/api/tools-services/${persistentId}`,
 		);
 
 		if (!response.ok) {
 			throw new Error(`Error: ${response.status} ${response.statusText}`);
 		}
 
-		const data = await response.json();
+		const item = await response.json(); // Parse the response as JSON
 
-		// Check if the data contains an 'items' array and find the item by id
-		if (!data.items || !Array.isArray(data.items)) {
-			throw new Error('Items not found in response');
-		}
-
-		const item = data.items.find(
-			(item: { id: number }) => item.id === Number(id),
-		);
 		if (!item) {
 			throw new Error('Item not found');
 		}
 
-		return item;
+		return item; // Return the fetched item
 	} catch (error) {
 		console.error('Error fetching detail data:', error);
 		throw new Error('Failed to fetch detail data');

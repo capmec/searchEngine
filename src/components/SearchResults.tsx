@@ -38,16 +38,16 @@ const SearchResults: React.FC<SearchResultsProps> = ({ items }) => {
 			{paginatedItems.length > 0 ? (
 				paginatedItems.map((item) => (
 					<div
-						key={item.id}
+						key={item.persistentId || item.id}
 						className='p-4 border-b'>
 						<h2 className='font-bold text-xl'>
 							<Link
-								to={`/tools-services/${item.id}`}
+								to={`/tools-services/${item.persistentId}`}
 								className='text-blue-600'>
 								{item.label}
 							</Link>
 						</h2>
-						{/* Check if accessibleAt is defined and has at least one item */}
+						{/* Accessible Link */}
 						{item.accessibleAt &&
 						Array.isArray(item.accessibleAt) &&
 						item.accessibleAt.length > 0 ? (
@@ -61,6 +61,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ items }) => {
 						) : (
 							<p>No accessible link available.</p>
 						)}
+						{/* Contributors */}
 						<div>
 							<h3 className='font-semibold mt-2'>Contributors:</h3>
 							{item.contributors.length > 0 ? (

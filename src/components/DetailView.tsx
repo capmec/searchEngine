@@ -1,76 +1,68 @@
-// src/components/DetailView.tsx
-
 import React, { useEffect, useState } from 'react';
-import { fetchDetailData } from '../services/api';
+import { useParams } from 'react-router-dom';
+import { fetchDetailData } from '../services/api'; // Use the updated fetch function
 
-interface DetailViewProps {
-	id: string | undefined; // ID should be passed from route params
-}
+const DetailView: React.FC = () => {
+	const { persistentId } = useParams<{ persistentId: string }>(); // Extract persistentId from URL
+	console.log('Persistent ID:', persistentId);
 
-const DetailView: React.FC<DetailViewProps> = ({ id }) => {
 	const [item, setItem] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
-		if (!id) {
-			setError('Invalid ID provided.');
-			setLoading(false);
-			return;
-		}
-
 		const fetchItemDetails = async () => {
-			try {
-				const result = await fetchDetailData(id);
-				setItem(result);
-			} catch (err) {
-				setError(
-					err instanceof Error ? err.message : 'An unknown error occurred',
-				);
-			} finally {
+			if (persistentId) {
+				try {
+					const fetchedItem = await fetchDetailData(persistentId); // Fetch using persistentId
+					setItem(fetchedItem);
+					setLoading(false);
+				} catch (err) {
+					setError('Failed to fetch item details');
+					setLoading(false);
+				}
+			} else {
+				setError('No item persistentId found');
 				setLoading(false);
 			}
 		};
 
-		fetchItemDetails();
-	}, [id]);
+		fetchItemDetails(); // Fetch data when component mounts
+	}, [persistentId]);
 
 	if (loading) {
 		return <div>Loading...</div>;
 	}
 
 	if (error) {
-		return <div>Error: {error}</div>;
+		return <div>{error}</div>;
+	}
+
+	if (!item) {
+		return <div>No item found</div>;
 	}
 
 	return (
-		<div>
-			<h1 className='text-2xl font-bold'>{item.label}</h1>
-			<p>{item.description}</p>
+		<div className='mt-4 p-4 border-b'>
+			<h1 className='font-bold text-xl'>{item.label}</h1>
+			<div>Category: {item.category}</div>
+			<div>
+				Last Info Update: {new Date(item.lastInfoUpdate).toLocaleDateString()}
+			</div>
+			<div>Description: {item.description}</div>
 			<h3 className='font-semibold mt-2'>Contributors:</h3>
 			{item.contributors.length > 0 ? (
 				<ul>
 					{item.contributors.map((contributor: any, idx: number) => (
 						<li key={idx}>
 							{contributor.actor.name}{' '}
-							{contributor.role?.label && `- ${contributor.role.label}`}
+							{contributor.actor.email && `- ${contributor.actor.email}`}
+							{contributor.role?.label && ` - ${contributor.role.label}`}
 						</li>
 					))}
 				</ul>
 			) : (
 				<p>No contributors available.</p>
-			)}
-			<h3 className='font-semibold mt-2'>Accessible At:</h3>
-			{item.accessibleAt.length > 0 ? (
-				<a
-					href={item.accessibleAt[0]}
-					className='text-blue-600'
-					target='_blank'
-					rel='noopener noreferrer'>
-					Access here
-				</a>
-			) : (
-				<p>No accessible link available.</p>
 			)}
 		</div>
 	);
