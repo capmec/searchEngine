@@ -1,6 +1,4 @@
-// src/components/SearchBar.tsx
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import SuggestionsDropdown from './SuggestionsDropdown';
 
 interface SearchBarProps {
@@ -20,22 +18,67 @@ const SearchBar: React.FC<SearchBarProps> = ({
 	onCategoryChange,
 	fetchSuggestions,
 }) => {
-	const [query, setQuery] = useState('');
+	const [query, setQuery] = useState(''); // To store the text input
+	const [showSuggestions, setShowSuggestions] = useState(false); // To control visibility of suggestions
+	const [inputFocused, setInputFocused] = useState(false); // To track input focus state
+	const suggestionsRef = useRef<HTMLUListElement | null>(null); // Ref for suggestions dropdown
+	const inputRef = useRef<HTMLInputElement | null>(null); // Ref for input field
 
 	const handleSearchSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		onSearch(query, category);
+		onSearch(query, category); // Perform search with the current query and category
+		setShowSuggestions(false); // Close suggestions on search submit
 	};
 
-	// Fetch suggestions whenever the query changes
 	useEffect(() => {
-		if (query) {
-			fetchSuggestions(query); // Fetch suggestions based on the current query
+		if (query && inputFocused) {
+			fetchSuggestions(query); // Fetch suggestions when typing
+			setShowSuggestions(true); // Show suggestions dropdown
 		} else {
-			// Clear suggestions if input is empty
-			// It's important to handle clearing suggestions if needed
+			setShowSuggestions(false); // Hide suggestions dropdown if query is empty or input is not focused
 		}
-	}, [query, fetchSuggestions]); // Depend only on query
+	}, [query, inputFocused, fetchSuggestions]);
+
+	const handleSuggestionClick = (suggestion: any) => {
+		// Update the input with the selected suggestion label
+		setQuery(suggestion.label);
+
+		// Perform the search with the selected suggestion
+		onSearch(suggestion.label, category); // You can also use suggestion.persistentId if needed
+
+		setShowSuggestions(false); // Close suggestions after selecting one
+	};
+
+	// Handle clicks outside of the dropdown to close it
+	const handleClickOutside = (event: MouseEvent) => {
+		if (
+			suggestionsRef.current &&
+			!suggestionsRef.current.contains(event.target as Node) &&
+			inputRef.current &&
+			!inputRef.current.contains(event.target as Node)
+		) {
+			setShowSuggestions(false); // Close suggestions if clicked outside both input and suggestions
+			setInputFocused(false); // Mark input as no longer focused
+		}
+	};
+
+	useEffect(() => {
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, []);
+
+	const handleInputFocus = () => {
+		setInputFocused(true); // Mark input as focused
+		if (suggestions.length > 0 && query) {
+			setShowSuggestions(true); // Only show suggestions if there is input and suggestions
+		}
+	};
+
+	const handleInputBlur = () => {
+		setInputFocused(false); // Mark input as no longer focused
+	};
 
 	return (
 		<form
@@ -43,11 +86,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
 			className='mb-4 relative'>
 			<div className='flex space-x-4'>
 				<input
+					ref={inputRef} // Attach ref to input field
 					type='text'
-					value={query}
-					onChange={(e) => setQuery(e.target.value)} // Update local query state
+					value={query} // Bind input value to query state
+					onChange={(e) => setQuery(e.target.value)} // Update query state on input change
 					className='border p-2 flex-grow'
 					placeholder='Search...'
+					onFocus={handleInputFocus} // Open suggestions on focus
+					onBlur={handleInputBlur} // Handle input blur
 				/>
 
 				<select
@@ -70,10 +116,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
 			</div>
 
 			{/* Suggestions Dropdown */}
-			{query && (
+			{showSuggestions && query && (
 				<SuggestionsDropdown
+					ref={suggestionsRef} // Attach ref to SuggestionsDropdown
 					suggestions={suggestions}
-					onSuggestionSelect={onSuggestionSelect} // Handle suggestion selection
+					onSuggestionSelect={handleSuggestionClick} // Pass the suggestion click handler
 				/>
 			)}
 		</form>

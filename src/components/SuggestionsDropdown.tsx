@@ -1,6 +1,6 @@
 // src/components/SuggestionsDropdown.tsx
 
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { SearchResultItem } from '../services/api'; // Ensure you import the right type
 
 interface SuggestionsDropdownProps {
@@ -8,12 +8,15 @@ interface SuggestionsDropdownProps {
 	onSuggestionSelect: (suggestion: SearchResultItem) => void;
 }
 
-const SuggestionsDropdown: React.FC<SuggestionsDropdownProps> = ({
-	suggestions,
-	onSuggestionSelect,
-}) => {
+// Use forwardRef to accept a ref
+const SuggestionsDropdown = forwardRef<
+	HTMLUListElement,
+	SuggestionsDropdownProps
+>(({ suggestions, onSuggestionSelect }, ref) => {
 	return (
-		<ul className='absolute z-10 bg-white border shadow-md mt-1 w-full max-h-60 overflow-y-auto'>
+		<ul
+			ref={ref} // Attach ref here
+			className='absolute z-10 bg-white border shadow-md mt-1 w-full max-h-60 overflow-y-auto'>
 			{suggestions.length > 0 ? (
 				suggestions.map((item) => (
 					<li
@@ -28,6 +31,6 @@ const SuggestionsDropdown: React.FC<SuggestionsDropdownProps> = ({
 			)}
 		</ul>
 	);
-};
+});
 
 export default SuggestionsDropdown;
