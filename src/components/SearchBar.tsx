@@ -1,13 +1,15 @@
 // src/components/SearchBar.tsx
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import SuggestionsDropdown from './SuggestionsDropdown';
 
 interface SearchBarProps {
 	onSearch: (query: string, category: string) => void;
-	suggestions: string[];
-	onSuggestionSelect: (suggestion: string) => void;
+	suggestions: any[]; // Adjust this based on the expected type of suggestions
+	onSuggestionSelect: (suggestion: any) => void; // Adjust based on expected type
 	category: string;
 	onCategoryChange: (category: string) => void;
+	fetchSuggestions: (query: string) => void; // Prop for fetching suggestions
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -16,23 +18,34 @@ const SearchBar: React.FC<SearchBarProps> = ({
 	onSuggestionSelect,
 	category,
 	onCategoryChange,
+	fetchSuggestions,
 }) => {
-	const [query, setQuery] = React.useState('');
+	const [query, setQuery] = useState('');
 
 	const handleSearchSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		onSearch(query, category);
 	};
 
+	// Fetch suggestions whenever the query changes
+	useEffect(() => {
+		if (query) {
+			fetchSuggestions(query); // Fetch suggestions based on the current query
+		} else {
+			// Clear suggestions if input is empty
+			// It's important to handle clearing suggestions if needed
+		}
+	}, [query, fetchSuggestions]); // Depend only on query
+
 	return (
 		<form
 			onSubmit={handleSearchSubmit}
-			className='mb-4'>
+			className='mb-4 relative'>
 			<div className='flex space-x-4'>
 				<input
 					type='text'
 					value={query}
-					onChange={(e) => setQuery(e.target.value)}
+					onChange={(e) => setQuery(e.target.value)} // Update local query state
 					className='border p-2 flex-grow'
 					placeholder='Search...'
 				/>
@@ -57,17 +70,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
 			</div>
 
 			{/* Suggestions Dropdown */}
-			{suggestions.length > 0 && (
-				<ul className='absolute z-10 bg-white border shadow-md'>
-					{suggestions.map((suggestion) => (
-						<li
-							key={suggestion}
-							onClick={() => onSuggestionSelect(suggestion)}
-							className='p-2 hover:bg-gray-200 cursor-pointer'>
-							{suggestion}
-						</li>
-					))}
-				</ul>
+			{query && (
+				<SuggestionsDropdown
+					suggestions={suggestions}
+					onSuggestionSelect={onSuggestionSelect} // Handle suggestion selection
+				/>
 			)}
 		</form>
 	);
