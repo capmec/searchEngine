@@ -3,11 +3,11 @@ import SuggestionsDropdown from './SuggestionsDropdown';
 
 interface SearchBarProps {
 	onSearch: (query: string, category: string) => void;
-	suggestions: any[]; // Adjust this based on the expected type of suggestions
-	onSuggestionSelect: (suggestion: any) => void; // Adjust based on expected type
+	suggestions: any[];
+	onSuggestionSelect: (suggestion: any) => void;
 	category: string;
 	onCategoryChange: (category: string) => void;
-	fetchSuggestions: (query: string) => void; // Prop for fetching suggestions
+	fetchSuggestions: (query: string) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -18,38 +18,32 @@ const SearchBar: React.FC<SearchBarProps> = ({
 	onCategoryChange,
 	fetchSuggestions,
 }) => {
-	const [query, setQuery] = useState(''); // To store the text input
-	const [showSuggestions, setShowSuggestions] = useState(false); // To control visibility of suggestions
-	const [inputFocused, setInputFocused] = useState(false); // To track input focus state
-	const suggestionsRef = useRef<HTMLUListElement | null>(null); // Ref for suggestions dropdown
-	const inputRef = useRef<HTMLInputElement | null>(null); // Ref for input field
-
-	const handleSearchSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		onSearch(query, category); // Perform search with the current query and category
-		setShowSuggestions(false); // Close suggestions on search submit
-	};
+	const [query, setQuery] = useState('');
+	const [showSuggestions, setShowSuggestions] = useState(false);
+	const [inputFocused, setInputFocused] = useState(false);
+	const suggestionsRef = useRef<HTMLUListElement | null>(null);
+	const inputRef = useRef<HTMLInputElement | null>(null);
 
 	useEffect(() => {
 		if (query && inputFocused) {
 			fetchSuggestions(query); // Fetch suggestions when typing
 			setShowSuggestions(true); // Show suggestions dropdown
 		} else {
-			setShowSuggestions(false); // Hide suggestions dropdown if query is empty or input is not focused
+			setShowSuggestions(false); // Hide suggestions dropdown
 		}
 	}, [query, inputFocused, fetchSuggestions]);
 
 	const handleSuggestionClick = (suggestion: any) => {
-		// Update the input with the selected suggestion label
-		setQuery(suggestion.label);
-
-		// Perform the search with the selected suggestion
-		onSearch(suggestion.label, category); // You can also use suggestion.persistentId if needed
-
-		setShowSuggestions(false); // Close suggestions after selecting one
+		setQuery(suggestion.label); // Update the input with the suggestion's label
+		onSuggestionSelect(suggestion); // Trigger search using the suggestion's label
+		setShowSuggestions(false); // Close the dropdown after selection
 	};
 
-	// Handle clicks outside of the dropdown to close it
+	const handleSearchSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		onSearch(query, category); // Trigger search on submit
+	};
+
 	const handleClickOutside = (event: MouseEvent) => {
 		if (
 			suggestionsRef.current &&
@@ -57,8 +51,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
 			inputRef.current &&
 			!inputRef.current.contains(event.target as Node)
 		) {
-			setShowSuggestions(false); // Close suggestions if clicked outside both input and suggestions
-			setInputFocused(false); // Mark input as no longer focused
+			setShowSuggestions(false); // Close suggestions if clicked outside
+			setInputFocused(false);
 		}
 	};
 
@@ -69,31 +63,19 @@ const SearchBar: React.FC<SearchBarProps> = ({
 		};
 	}, []);
 
-	const handleInputFocus = () => {
-		setInputFocused(true); // Mark input as focused
-		if (suggestions.length > 0 && query) {
-			setShowSuggestions(true); // Only show suggestions if there is input and suggestions
-		}
-	};
-
-	const handleInputBlur = () => {
-		setInputFocused(false); // Mark input as no longer focused
-	};
-
 	return (
 		<form
 			onSubmit={handleSearchSubmit}
 			className='mb-4 relative'>
 			<div className='flex space-x-4'>
 				<input
-					ref={inputRef} // Attach ref to input field
+					ref={inputRef}
 					type='text'
-					value={query} // Bind input value to query state
-					onChange={(e) => setQuery(e.target.value)} // Update query state on input change
+					value={query}
+					onChange={(e) => setQuery(e.target.value)}
 					className='border p-2 flex-grow'
 					placeholder='Search...'
-					onFocus={handleInputFocus} // Open suggestions on focus
-					onBlur={handleInputBlur} // Handle input blur
+					onFocus={() => setInputFocused(true)}
 				/>
 
 				<select
@@ -118,9 +100,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
 			{/* Suggestions Dropdown */}
 			{showSuggestions && query && (
 				<SuggestionsDropdown
-					ref={suggestionsRef} // Attach ref to SuggestionsDropdown
+					ref={suggestionsRef}
 					suggestions={suggestions}
-					onSuggestionSelect={handleSuggestionClick} // Pass the suggestion click handler
+					onSuggestionSelect={handleSuggestionClick}
 				/>
 			)}
 		</form>

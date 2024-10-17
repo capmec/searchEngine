@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchDetailData } from '../services/api'; // Use the updated fetch function
+import { fetchDetailData } from '../services/api';
 
 const DetailView: React.FC = () => {
-	const { persistentId } = useParams<{ persistentId: string }>(); // Extract persistentId from URL
-	console.log('Persistent ID:', persistentId);
-
+	const { persistentId } = useParams<{ persistentId: string }>();
 	const [item, setItem] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -14,7 +12,7 @@ const DetailView: React.FC = () => {
 		const fetchItemDetails = async () => {
 			if (persistentId) {
 				try {
-					const fetchedItem = await fetchDetailData(persistentId); // Fetch using persistentId
+					const fetchedItem = await fetchDetailData(persistentId);
 					setItem(fetchedItem);
 					setLoading(false);
 				} catch (err) {
@@ -27,37 +25,31 @@ const DetailView: React.FC = () => {
 			}
 		};
 
-		fetchItemDetails(); // Fetch data when component mounts
+		fetchItemDetails();
 	}, [persistentId]);
 
-	if (loading) {
-		return <div>Loading...</div>;
-	}
-
-	if (error) {
-		return <div>{error}</div>;
-	}
-
-	if (!item) {
-		return <div>No item found</div>;
-	}
+	if (loading) return <div>Loading...</div>;
+	if (error) return <div>{error}</div>;
+	if (!item) return <div>No item found</div>;
 
 	return (
 		<div className='mt-4 p-4 border-b'>
 			<h1 className='font-bold text-xl'>{item.label}</h1>
-			<div>Category: {item.category}</div>
+			<div>Category: {item.category || 'N/A'}</div>
 			<div>
-				Last Info Update: {new Date(item.lastInfoUpdate).toLocaleDateString()}
+				Last Info Update:{' '}
+				{item.lastInfoUpdate
+					? new Date(item.lastInfoUpdate).toLocaleDateString()
+					: 'N/A'}
 			</div>
-			<div>Description: {item.description}</div>
+			<div>Description: {item.description || 'No description available.'}</div>
 			<h3 className='font-semibold mt-2'>Contributors:</h3>
-			{item.contributors.length > 0 ? (
+			{item.contributors && item.contributors.length > 0 ? (
 				<ul>
 					{item.contributors.map((contributor: any, idx: number) => (
 						<li key={idx}>
-							{contributor.actor.name}{' '}
-							{contributor.actor.email && `- ${contributor.actor.email}`}
-							{contributor.role?.label && ` - ${contributor.role.label}`}
+							{contributor.actor?.name || 'Unknown contributor'}{' '}
+							{contributor.role?.label && `- ${contributor.role.label}`}
 						</li>
 					))}
 				</ul>
