@@ -9,7 +9,7 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from '@/components/ui/select';
+} from './ui/select';
 import { Button } from './ui/button';
 import {
 	AcademicCapIcon,
