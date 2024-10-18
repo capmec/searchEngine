@@ -52,5 +52,5 @@ This project is a web-based search interface for exploring resources from the **
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/ssh-marketplace-search-app.git
-   cd ssh-marketplace-search-app
+   git clone https://github.com/capmec/searchEngine.git
+   cd searchEngine
