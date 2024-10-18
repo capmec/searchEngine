@@ -1,6 +1,12 @@
-// src/components/Pagination.tsx
-
 import React from 'react';
+import {
+	Pagination,
+	PaginationContent,
+	PaginationItem,
+	PaginationLink,
+	PaginationNext,
+	PaginationPrevious,
+} from './ui/pagination'; // Adjust the import based on your file structure
 
 interface PaginationProps {
 	currentPage: number;
@@ -8,25 +14,50 @@ interface PaginationProps {
 	onPageChange: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({
+const CustomPagination: React.FC<PaginationProps> = ({
 	currentPage,
 	totalPages,
 	onPageChange,
 }) => {
 	return (
-		<div className='flex justify-center mt-4'>
-			{Array.from({ length: totalPages }).map((_, index) => (
-				<button
-					key={index}
-					onClick={() => onPageChange(index + 1)}
-					className={`px-3 py-1 border ${
-						currentPage === index + 1 ? 'bg-blue-500 text-white' : 'text-black'
-					}`}>
-					{index + 1}
-				</button>
-			))}
-		</div>
+		<Pagination className='cursor-pointer'>
+			<PaginationContent>
+				{/* Previous Button */}
+				<PaginationItem>
+					<PaginationPrevious
+						onClick={() => {
+							if (currentPage > 1) {
+								onPageChange(currentPage - 1);
+							}
+						}}
+					/>
+				</PaginationItem>
+
+				{/* Page Numbers */}
+				{Array.from({ length: totalPages }).map((_, index) => (
+					<PaginationItem key={index}>
+						<PaginationLink
+							onClick={() => onPageChange(index + 1)}
+							isActive={currentPage === index + 1} // Highlight active page
+						>
+							{index + 1}
+						</PaginationLink>
+					</PaginationItem>
+				))}
+
+				{/* Next Button */}
+				<PaginationItem>
+					<PaginationNext
+						onClick={() => {
+							if (currentPage < totalPages) {
+								onPageChange(currentPage + 1);
+							}
+						}}
+					/>
+				</PaginationItem>
+			</PaginationContent>
+		</Pagination>
 	);
 };
 
-export default Pagination;
+export default CustomPagination;
