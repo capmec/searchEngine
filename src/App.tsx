@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import SearchBar from './components/SearchBar';
 import SearchResults from './components/SearchResults';
 import { fetchItems, SearchResultItem } from './services/api'; // Import SearchResultItem from your API
-import FacetedFilter from './components/FacetedFilter';
 
 const App: React.FC = () => {
 	const [items, setItems] = useState<SearchResultItem[]>([]); // Explicitly set the type
