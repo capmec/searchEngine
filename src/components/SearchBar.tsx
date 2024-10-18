@@ -65,6 +65,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
 		navigate(`/search?q=${query}&category=${category}`); // Navigate to the search URL
 	};
 
+	const handleClear = () => {
+		setQuery('');
+		setShowSuggestions(false);
+		onSearch('', category);
+		navigate('/');
+	};
+
 	const handleClickOutside = (event: MouseEvent) => {
 		if (
 			suggestionsRef.current &&
@@ -150,6 +157,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
 						type='submit'
 						className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>
 						Search
+					</Button>
+
+					<Button
+						type='button'
+						onClick={handleClear}
+						className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded'>
+						Clear
 					</Button>
 				</div>
 
