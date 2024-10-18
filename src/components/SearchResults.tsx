@@ -8,6 +8,7 @@ interface SearchResultsProps {
 	currentPage: number;
 	onPageChange: (page: number) => void;
 	pageSize: number;
+	onPageSizeChange: (size: number) => void; // For handling page size changes
 }
 
 const SearchResults: React.FC<SearchResultsProps> = ({
@@ -15,6 +16,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 	currentPage,
 	onPageChange,
 	pageSize,
+	onPageSizeChange,
 }) => {
 	const [paginatedItems, setPaginatedItems] = useState<SearchResultItem[]>([]);
 
@@ -28,7 +30,27 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
 	return (
 		<>
-			<div className='mt-4 bg-[#ededed]'>
+			{/* Items per page selector */}
+			<div className='flex  justify-end mt-4 mr-14'>
+				<div>
+					<label
+						htmlFor='items-per-page'
+						className='mr-2'>
+						Items per page:
+					</label>
+					<select
+						id='items-per-page'
+						value={pageSize}
+						onChange={(e) => onPageSizeChange(Number(e.target.value))}
+						className='border p-1'>
+						<option value={5}>5</option>
+						<option value={10}>10</option>
+						<option value={15}>15</option>
+					</select>
+				</div>
+			</div>
+
+			<div className='mt-2 bg-gray-50'>
 				{paginatedItems.length > 0 ? (
 					paginatedItems.map((item) => (
 						<div
@@ -41,7 +63,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 									{item.label}
 								</Link>
 							</h2>
-
 							{/* Accessible Link */}
 							{item.accessibleAt && item.accessibleAt.length > 0 ? (
 								<a
@@ -54,8 +75,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 							) : (
 								<p>No accessible link available.</p>
 							)}
-
-							{/* Contributors */}
+							Contributors
 							<div>
 								<h3 className='font-semibold mt-2'>Contributors:</h3>
 								{item.contributors.length > 0 ? (

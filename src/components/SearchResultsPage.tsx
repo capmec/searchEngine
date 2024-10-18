@@ -16,7 +16,8 @@ const SearchResultsPage: React.FC = () => {
 	const [category, setCategory] = useState(initialCategory);
 	const [items, setItems] = useState<any[]>([]); // Adjust type based on your SearchResultItem
 	const [currentPage, setCurrentPage] = useState(1);
-	const pageSize = 10; // Adjust page size as necessary
+	const [pageSize, setPageSize] = useState(10);
+	const [totalItems, setTotalItems] = useState(0);
 
 	const fetchData = async () => {
 		if (query) {
@@ -24,6 +25,7 @@ const SearchResultsPage: React.FC = () => {
 			try {
 				const response = await fetchItems(query, 1, pageSize, filters);
 				setItems(response.items);
+				setTotalItems(response.count);
 			} catch (error) {
 				console.error('Error fetching items:', error);
 			}
@@ -47,17 +49,29 @@ const SearchResultsPage: React.FC = () => {
 				const filters = { categories: category }; // Apply category as a filter
 				const response = await fetchItems(query, 1, pageSize, filters);
 				setItems(response.items);
+				setTotalItems(response.count);
 			}
 		};
 
 		fetchData();
-	}, [query, category, currentPage]);
+	}, [query, category, currentPage, pageSize]);
 
 	const handleCategoryChange = async (newCategory: string) => {
 		setCategory(newCategory);
 		await fetchData();
 		navigate(`?q=${encodeURIComponent(query)}&category=${newCategory}`);
 		setCurrentPage(1);
+	};
+
+	// Handle page size change
+	const handlePageSizeChange = (size: number) => {
+		setPageSize(size);
+		setCurrentPage(1); // Reset to page 1 when page size changes
+	};
+
+	// Handle page change
+	const handlePageChange = (page: number) => {
+		setCurrentPage(page);
 	};
 
 	const handleSearch = (searchQuery: string, selectedCategory: string) => {
@@ -77,13 +91,16 @@ const SearchResultsPage: React.FC = () => {
 				fetchSuggestions={() => {}} // Implement fetchSuggestions if needed
 			/>
 
-			<h1>Search Results for "{query}"</h1>
+			<h1 className=' m-7  flex justify-center text-2xl text-blue-500'>
+				Search Results for: "{query}"
+			</h1>
 
 			<SearchResults
 				items={items}
 				currentPage={currentPage}
 				onPageChange={setCurrentPage}
 				pageSize={pageSize}
+				onPageSizeChange={handlePageSizeChange}
 			/>
 		</div>
 	);
