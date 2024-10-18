@@ -2,6 +2,8 @@
 
 ## **Social Sciences & Humanities Open Marketplace Search App**
 
+You can see the project deployed here:  https://capmec.github.io/searchEngine/
+
 This project is a web-based search interface for exploring resources from the **Social Sciences & Humanities Open Marketplace**, built using **React**, **TypeScript**, **Vite**, and **Tailwind CSS**. It allows users to search for items using the `/item-search` endpoint of the SSH Open Marketplace API, filter results by category, view detailed information about items, and paginate through search results.
 
 
