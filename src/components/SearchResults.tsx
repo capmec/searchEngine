@@ -27,16 +27,16 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 	const totalPages = Math.ceil(items.length / pageSize);
 
 	return (
-		<div className='mt-4'>
+		<div className='mt-4 bg-[#ededed]'>
 			{paginatedItems.length > 0 ? (
 				paginatedItems.map((item) => (
 					<div
 						key={item.persistentId || item.id}
-						className='p-4 border-b'>
+						className='p-4 border-b-4 border-[#ffffff]'>
 						<h2 className='font-bold text-xl'>
 							<Link
 								to={`/tools-services/${item.persistentId}`}
-								className='text-blue-600'>
+								className='text-[#045890] hover:text-blue-950'>
 								{item.label}
 							</Link>
 						</h2>

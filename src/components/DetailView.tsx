@@ -43,7 +43,9 @@ const DetailView: React.FC = () => {
 					? new Date(item.lastInfoUpdate).toLocaleDateString()
 					: 'N/A'}
 			</div>
-			<div>Description: {item.description || 'No description available.'}</div>
+			<div className='flex '>
+				Description: {item.description || 'No description available.'}
+			</div>
 			<h3 className='font-semibold mt-2'>Contributors:</h3>
 			{item.contributors && item.contributors.length > 0 ? (
 				<ul>
