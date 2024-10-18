@@ -27,54 +27,57 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 	const totalPages = Math.ceil(items.length / pageSize);
 
 	return (
-		<div className='mt-4 bg-[#ededed]'>
-			{paginatedItems.length > 0 ? (
-				paginatedItems.map((item) => (
-					<div
-						key={item.persistentId || item.id}
-						className='p-4 border-b-4 border-[#ffffff]'>
-						<h2 className='font-bold text-xl'>
-							<Link
-								to={`/tools-services/${item.persistentId}`}
-								className='text-[#045890] hover:text-blue-950'>
-								{item.label}
-							</Link>
-						</h2>
+		<>
+			<div className='mt-4 bg-[#ededed]'>
+				{paginatedItems.length > 0 ? (
+					paginatedItems.map((item) => (
+						<div
+							key={item.persistentId || item.id}
+							className='p-4 border-b-4 border-[#ffffff]'>
+							<h2 className='font-bold text-xl'>
+								<Link
+									to={`/tools-services/${item.persistentId}`}
+									className='text-[#045890] hover:text-blue-950'>
+									{item.label}
+								</Link>
+							</h2>
 
-						{/* Accessible Link */}
-						{item.accessibleAt && item.accessibleAt.length > 0 ? (
-							<a
-								href={item.accessibleAt[0]}
-								className='text-blue-600'
-								target='_blank'
-								rel='noopener noreferrer'>
-								Access here
-							</a>
-						) : (
-							<p>No accessible link available.</p>
-						)}
-
-						{/* Contributors */}
-						<div>
-							<h3 className='font-semibold mt-2'>Contributors:</h3>
-							{item.contributors.length > 0 ? (
-								<ul>
-									{item.contributors.map((contributor, idx) => (
-										<li key={idx}>
-											{contributor.actor.name}{' '}
-											{contributor.role?.label && `- ${contributor.role.label}`}
-										</li>
-									))}
-								</ul>
+							{/* Accessible Link */}
+							{item.accessibleAt && item.accessibleAt.length > 0 ? (
+								<a
+									href={item.accessibleAt[0]}
+									className='text-blue-600'
+									target='_blank'
+									rel='noopener noreferrer'>
+									Access here
+								</a>
 							) : (
-								<p>No contributors available.</p>
+								<p>No accessible link available.</p>
 							)}
+
+							{/* Contributors */}
+							<div>
+								<h3 className='font-semibold mt-2'>Contributors:</h3>
+								{item.contributors.length > 0 ? (
+									<ul>
+										{item.contributors.map((contributor, idx) => (
+											<li key={idx}>
+												{contributor.actor.name}{' '}
+												{contributor.role?.label &&
+													`- ${contributor.role.label}`}
+											</li>
+										))}
+									</ul>
+								) : (
+									<p>No contributors available.</p>
+								)}
+							</div>
 						</div>
-					</div>
-				))
-			) : (
-				<p>No results found.</p>
-			)}
+					))
+				) : (
+					<p>No results found.</p>
+				)}
+			</div>
 
 			{/* Pagination Component */}
 			<Pagination
@@ -82,7 +85,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 				totalPages={totalPages}
 				onPageChange={onPageChange}
 			/>
-		</div>
+		</>
 	);
 };
 
