@@ -1,55 +1,68 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import SearchBar from './components/SearchBar';
 import SearchResults from './components/SearchResults';
-import { fetchItems, SearchResultItem } from './services/api';
+import { fetchItems, SearchResultItem } from './services/api'; // Import SearchResultItem from your API
+import FacetedFilter from './components/FacetedFilter';
 
 const App: React.FC = () => {
-	const [items, setItems] = useState<SearchResultItem[]>([]);
-	const [category, setCategory] = useState('__all__');
-	const [suggestions, setSuggestions] = useState<SearchResultItem[]>([]);
+	const [items, setItems] = useState<SearchResultItem[]>([]); // Explicitly set the type
+	const [facets, setFacets] = useState({});
+	const [suggestions, setSuggestions] = useState<SearchResultItem[]>([]); // Also set the correct type for suggestions
+	const [category, setCategory] = useState('all');
+	const [query, setQuery] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
 	const pageSize = 10;
+	const [searchParams] = useSearchParams();
 
-	// Function to fetch items based on query and category
+	// Fetch items when URL parameters (query or category) change
+	useEffect(() => {
+		const searchQuery = searchParams.get('q') || '';
+		const selectedCategory = searchParams.get('category') || 'all';
+		if (searchQuery) {
+			handleSearch(searchQuery, selectedCategory);
+		}
+	}, [searchParams]);
+
 	const handleSearch = async (
 		searchQuery: string,
 		selectedCategory: string,
 	) => {
-		const filters: Record<string, string> = {};
-		if (selectedCategory !== '__all__') {
-			filters.categories = selectedCategory;
-		}
-
 		try {
+			const filters: Record<string, string> = {};
+			if (selectedCategory && selectedCategory !== 'all') {
+				filters.categories = selectedCategory;
+			}
+
 			const response = await fetchItems(
 				searchQuery,
 				currentPage,
 				pageSize,
 				filters,
 			);
-			setItems(response.items);
+			setItems(response.items); // No more error here
+			setFacets(response.facets);
 		} catch (error) {
 			console.error('Error fetching items:', error);
 		}
 	};
 
-	const fetchSuggestions = async (input: string) => {
+	const fetchSuggestions = async (searchQuery: string) => {
 		try {
-			const response = await fetchItems(input, 1, 5, {});
+			const response = await fetchItems(searchQuery, 1, 5, {});
 			setSuggestions(response.items);
 		} catch (error) {
 			console.error('Error fetching suggestions:', error);
 		}
 	};
 
-	const handleSuggestionSelect = (suggestion: SearchResultItem) => {
-		handleSearch(suggestion.label, category); // Search with the selected suggestion
+	const handleSuggestionSelect = (suggestion: any) => {
+		handleSearch(suggestion.label, category);
 	};
 
 	return (
 		<div className='container mx-auto p-4'>
 			<h1 className='text-2xl font-bold'>Search Marketplace</h1>
-
 			<SearchBar
 				onSearch={handleSearch}
 				suggestions={suggestions}
@@ -58,7 +71,6 @@ const App: React.FC = () => {
 				onCategoryChange={setCategory}
 				fetchSuggestions={fetchSuggestions}
 			/>
-
 			<SearchResults
 				items={items}
 				currentPage={currentPage}

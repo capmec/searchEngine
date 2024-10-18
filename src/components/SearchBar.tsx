@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SuggestionsDropdown from './SuggestionsDropdown';
 
 interface SearchBarProps {
@@ -23,25 +24,28 @@ const SearchBar: React.FC<SearchBarProps> = ({
 	const [inputFocused, setInputFocused] = useState(false);
 	const suggestionsRef = useRef<HTMLUListElement | null>(null);
 	const inputRef = useRef<HTMLInputElement | null>(null);
+	const navigate = useNavigate(); // Use useNavigate for navigation
 
 	useEffect(() => {
 		if (query && inputFocused) {
-			fetchSuggestions(query); // Fetch suggestions when typing
-			setShowSuggestions(true); // Show suggestions dropdown
+			fetchSuggestions(query);
+			setShowSuggestions(true);
 		} else {
-			setShowSuggestions(false); // Hide suggestions dropdown
+			setShowSuggestions(false);
 		}
 	}, [query, inputFocused, fetchSuggestions]);
 
 	const handleSuggestionClick = (suggestion: any) => {
-		setQuery(suggestion.label); // Update the input with the suggestion's label
+		setQuery(suggestion.label);
 		onSuggestionSelect(suggestion); // Trigger search using the suggestion's label
-		setShowSuggestions(false); // Close the dropdown after selection
+		setShowSuggestions(false);
+		navigate(`/search?q=${suggestion.label}&category=${category}`); // Navigate with query and category
 	};
 
 	const handleSearchSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		onSearch(query, category); // Trigger search on submit
+		onSearch(query, category);
+		navigate(`/search?q=${query}&category=${category}`); // Navigate to the search URL
 	};
 
 	const handleClickOutside = (event: MouseEvent) => {
@@ -51,7 +55,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 			inputRef.current &&
 			!inputRef.current.contains(event.target as Node)
 		) {
-			setShowSuggestions(false); // Close suggestions if clicked outside
+			setShowSuggestions(false);
 			setInputFocused(false);
 		}
 	};
@@ -82,7 +86,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 					value={category}
 					onChange={(e) => onCategoryChange(e.target.value)}
 					className='border p-2'>
-					<option value='__all__'>All categories</option>
+					<option value='all'>All categories</option>
 					<option value='tool-or-service'>Tools & services</option>
 					<option value='training-material'>Training materials</option>
 					<option value='publication'>Publications</option>
@@ -97,7 +101,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
 				</button>
 			</div>
 
-			{/* Suggestions Dropdown */}
 			{showSuggestions && query && (
 				<SuggestionsDropdown
 					ref={suggestionsRef}

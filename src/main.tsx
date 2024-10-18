@@ -7,6 +7,8 @@ import App from './App';
 
 import './index.css';
 
+import SearchResultsPage from './components/SearchResultsPage';
+
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement,
 );
@@ -17,6 +19,10 @@ root.render(
 				<Route
 					path='/'
 					element={<App />}
+				/>
+				<Route
+					path='/search'
+					element={<SearchResultsPage />}
 				/>
 				<Route
 					path='/tools-services/:persistentId'

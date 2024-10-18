@@ -13,6 +13,7 @@ const DetailView: React.FC = () => {
 			if (persistentId) {
 				try {
 					const fetchedItem = await fetchDetailData(persistentId);
+					console.log('DetailView Fetched Item:', fetchedItem); // Log the fetched item here
 					setItem(fetchedItem);
 					setLoading(false);
 				} catch (err) {
