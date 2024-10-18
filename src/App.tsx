@@ -6,10 +6,9 @@ import { fetchItems, SearchResultItem } from './services/api'; // Import SearchR
 
 const App: React.FC = () => {
 	const [items, setItems] = useState<SearchResultItem[]>([]); // Explicitly set the type
-	const [facets, setFacets] = useState({});
+	const [, setFacets] = useState({});
 	const [suggestions, setSuggestions] = useState<SearchResultItem[]>([]); // Also set the correct type for suggestions
 	const [category, setCategory] = useState('all');
-	const [query, setQuery] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
 	const pageSize = 10;
 	const [searchParams] = useSearchParams();

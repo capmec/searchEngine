@@ -1,6 +1,6 @@
 // src/components/SuggestionsDropdown.tsx
 
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { SearchResultItem } from '../services/api'; // Ensure you import the right type
 
 interface SuggestionsDropdownProps {
