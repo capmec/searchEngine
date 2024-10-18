@@ -1,6 +1,23 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SuggestionsDropdown from './SuggestionsDropdown';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { Input } from './ui/input';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
+import { Button } from './ui/button';
+import {
+	AcademicCapIcon,
+	CircleStackIcon,
+	WrenchScrewdriverIcon,
+	DocumentTextIcon,
+	ShareIcon,
+} from '@heroicons/react/20/solid';
 
 interface SearchBarProps {
 	onSearch: (query: string, category: string) => void;
@@ -68,47 +85,83 @@ const SearchBar: React.FC<SearchBarProps> = ({
 	}, []);
 
 	return (
-		<form
-			onSubmit={handleSearchSubmit}
-			className='mb-4 relative'>
-			<div className='flex space-x-4'>
-				<input
-					ref={inputRef}
-					type='text'
-					value={query}
-					onChange={(e) => setQuery(e.target.value)}
-					className='border p-2 flex-grow'
-					placeholder='Search...'
-					onFocus={() => setInputFocused(true)}
-				/>
+		<div className='flex justify-between py-3 px-6 bg-gray-50 border-b space-x-6'>
+			<form
+				onSubmit={handleSearchSubmit}
+				className='mb-4 relative w-full max-w-lg'>
+				<div className='flex space-x-4'>
+					<div className='relative flex flex-items-center text-gray-400 focus-within:text-gray-600'>
+						<MagnifyingGlassIcon className='h-5 w-5 absolute top-1/2 -translate-y-1/2 left-2 pointer-events-none' />
 
-				<select
-					value={category}
-					onChange={(e) => onCategoryChange(e.target.value)}
-					className='border p-2'>
-					<option value='all'>All categories</option>
-					<option value='tool-or-service'>Tools & services</option>
-					<option value='training-material'>Training materials</option>
-					<option value='publication'>Publications</option>
-					<option value='dataset'>Datasets</option>
-					<option value='workflow'>Workflows</option>
-				</select>
+						<Input
+							ref={inputRef}
+							type='text'
+							value={query}
+							onChange={(e) => setQuery(e.target.value)}
+							className=' w-[400px] pr-3 pl-10 pz-2  font-semibold placeholder-gray-500 text-black  border-none ring-2 ring-gray-300 focus:ring-gray-500 focus:ring-2'
+							placeholder='Search...'
+							onFocus={() => setInputFocused(true)}
+						/>
+					</div>
+					<div className='relative flex space-x-2'>
+						<Select
+							value={category}
+							onValueChange={onCategoryChange}>
+							<SelectTrigger className='  flex justify-evenly w-[196px]'>
+								<SelectValue placeholder='Select a category' />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value='all'>All categories</SelectItem>
+								<div className='flex space-x-2 relative'>
+									<SelectItem value='tool-or-service'>
+										<WrenchScrewdriverIcon className='w-4 h-4 mr-2 absolute left-2' />
+										Tools & services
+									</SelectItem>
+								</div>
+								<div className='flex space-x-2 relative'>
+									<SelectItem value='training-material'>
+										<AcademicCapIcon className='w-4 h-4 mr-2 absolute left-2' />
+										Training materials
+									</SelectItem>
+								</div>
+								<div className='flex space-x-2 relative'>
+									<SelectItem value='publication'>
+										<DocumentTextIcon className='w-4 h-4 mr-2 absolute left-2' />
+										Publications
+									</SelectItem>
+								</div>
+								<div className='flex space-x-2 relative'>
+									<SelectItem value='dataset'>
+										<CircleStackIcon className='w-4 h-4 mr-2 absolute left-2' />
+										Datasets
+									</SelectItem>
+								</div>
+								<div className='flex space-x-2 relative'>
+									<SelectItem value='workflow'>
+										<ShareIcon className='w-4 h-4 mr-2 absolute left-2' />
+										Workflows
+									</SelectItem>
+								</div>
+							</SelectContent>
+						</Select>
+					</div>
 
-				<button
-					type='submit'
-					className='bg-blue-500 text-white p-2'>
-					Search
-				</button>
-			</div>
+					<Button
+						type='submit'
+						className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>
+						Search
+					</Button>
+				</div>
 
-			{showSuggestions && query && (
-				<SuggestionsDropdown
-					ref={suggestionsRef}
-					suggestions={suggestions}
-					onSuggestionSelect={handleSuggestionClick}
-				/>
-			)}
-		</form>
+				{showSuggestions && query && (
+					<SuggestionsDropdown
+						ref={suggestionsRef}
+						suggestions={suggestions}
+						onSuggestionSelect={handleSuggestionClick}
+					/>
+				)}
+			</form>
+		</div>
 	);
 };
 
