@@ -75,7 +75,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 							) : (
 								<p>No accessible link available.</p>
 							)}
-							Contributors
+
 							<div>
 								<h3 className='font-semibold mt-2'>Contributors:</h3>
 								{item.contributors.length > 0 ? (

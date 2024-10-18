@@ -17,7 +17,7 @@ const SearchResultsPage: React.FC = () => {
 	const [items, setItems] = useState<any[]>([]); // Adjust type based on your SearchResultItem
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(10);
-	const [totalItems, setTotalItems] = useState(0);
+	const [, setTotalItems] = useState(0);
 
 	const fetchData = async () => {
 		if (query) {
@@ -67,11 +67,6 @@ const SearchResultsPage: React.FC = () => {
 	const handlePageSizeChange = (size: number) => {
 		setPageSize(size);
 		setCurrentPage(1); // Reset to page 1 when page size changes
-	};
-
-	// Handle page change
-	const handlePageChange = (page: number) => {
-		setCurrentPage(page);
 	};
 
 	const handleSearch = (searchQuery: string, selectedCategory: string) => {

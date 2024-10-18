@@ -10,7 +10,7 @@ const App: React.FC = () => {
 	const [suggestions, setSuggestions] = useState<SearchResultItem[]>([]); // Also set the correct type for suggestions
 	const [category, setCategory] = useState('all');
 	const [currentPage, setCurrentPage] = useState(1);
-	const pageSize = 10;
+	const [pageSize, setPageSize] = useState(5);
 	const [searchParams] = useSearchParams();
 
 	// Fetch items when URL parameters (query or category) change
@@ -74,6 +74,7 @@ const App: React.FC = () => {
 				currentPage={currentPage}
 				onPageChange={setCurrentPage}
 				pageSize={pageSize}
+				onPageSizeChange={setPageSize}
 			/>
 		</div>
 	);
